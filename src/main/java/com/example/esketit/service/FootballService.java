@@ -19,7 +19,7 @@ public class FootballService {
 
 	private static final ZoneId UTC = ZoneId.of("UTC");
 
-	public MatchResponseDto getTodayMatches() {
+	public MatchResponseDto getTodayEplMatches() {
 		LocalDateTime londonDate = LocalDateTime.now(UTC);
 
 		String today = londonDate.format(DateTimeFormatter.ISO_LOCAL_DATE);

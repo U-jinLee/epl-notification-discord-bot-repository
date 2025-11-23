@@ -9,9 +9,14 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 
+import com.example.esketit.common.constants.FootballConstants;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * DiscordSender는 Discord 채널에 임베드 메시지를 전송하는 서비스입니다.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -21,8 +26,6 @@ public class DiscordSender {
 	@Value("${discord.bot.channel.id}")
 	private String channelId;
 
-	private static final String MADE_BY = "Made by JINJIN";
-
 	public void sendEmbed(String title, String description) {
 		TextChannel channel = jda.getTextChannelById(this.channelId);
 
@@ -31,9 +34,9 @@ public class DiscordSender {
 		embed.setDescription(description);
 		embed.setColor(0x1E90FF);
 
-		embed.setFooter(MADE_BY, null);
+		embed.setFooter(FootballConstants.MADE_BY.getValue(), null);
 
-		if(channel != null) channel.sendMessageEmbeds(embed.build()).queue();
+		if (channel != null) channel.sendMessageEmbeds(embed.build()).queue();
 	}
 
 	public void sendEmbed(String title, String imageUrl, String description) {
@@ -45,18 +48,23 @@ public class DiscordSender {
 		embed.setThumbnail(imageUrl);
 		embed.setDescription(description);
 		embed.setColor(0x1E90FF);
-		embed.setFooter(MADE_BY, null);
+		embed.setFooter(FootballConstants.MADE_BY.getValue(), null);
 
-		if(channel != null) channel.sendMessageEmbeds(embed.build()).queue();
+		if (channel != null)
+			channel.sendMessageEmbeds(embed.build()).queue();
 	}
 
 	// Fields를 사용한 Embed 전송
-	public void sendEmbedWithFields(String title, int color, List<EmbedField> fields) {
-		sendEmbedWithFields(title, color, fields, null, null);
+	public void sendEmbedWithFields(String title, int color, String thumbnail, List<EmbedField> fields) {
+		sendEmbedWithFields(title, color, fields, thumbnail, null);
 	}
 
 	// Fields와 thumbnail을 사용한 Embed 전송
-	public void sendEmbedWithFields(String title, int color, List<EmbedField> fields, String thumbnailUrl, String authorName) {
+	public void sendEmbedWithFields(String title,
+									int color,
+									List<EmbedField> fields,
+									String thumbnailUrl,
+									String authorName) {
 		TextChannel channel = jda.getTextChannelById(channelId);
 
 		if (channel == null) {
@@ -67,7 +75,7 @@ public class DiscordSender {
 		EmbedBuilder embed = new EmbedBuilder()
 			.setTitle(title)
 			.setColor(color)
-			.setFooter(MADE_BY, null);
+			.setFooter(FootballConstants.MADE_BY.getValue(), null);
 
 		if (thumbnailUrl != null) {
 			embed.setThumbnail(thumbnailUrl);
@@ -88,6 +96,7 @@ public class DiscordSender {
 	}
 
 	// EmbedField 레코드
-	public record EmbedField(String name, String value, boolean inline) {}
+	public record EmbedField(String name, String value, boolean inline) {
+	}
 
 }
