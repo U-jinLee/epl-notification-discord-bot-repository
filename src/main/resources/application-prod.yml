@@ -1,0 +1,15 @@
+server:
+  port: 8081
+spring:
+  config:
+    import: optional:file:.env
+    activate:
+      on-profile: prod
+discord:
+  bot:
+    token: ${DISCORD_TOKEN}
+    channel:
+      id: ${DISCORD_CHANNEL_ID}
+football:
+  api:
+    token: ${FOOTBALL_API_KEY}
