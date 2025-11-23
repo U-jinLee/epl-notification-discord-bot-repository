@@ -15,13 +15,6 @@ public record MatchResponseDto(List<Match> matches) {
     ) {
     }
 
-    public record Team(
-        String name,
-        String shortName,
-        String crest
-    ) {
-    }
-
     public record Score(
         String winner,
         TimeScore fullTime

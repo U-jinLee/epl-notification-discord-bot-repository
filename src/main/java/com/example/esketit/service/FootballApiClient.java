@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import com.example.esketit.dto.MatchResponseDto;
+import com.example.esketit.dto.StandingResponseDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,4 +33,15 @@ public class FootballApiClient {
 			.body(MatchResponseDto.class);
 	}
 
+	public StandingResponseDto getEplStandings() {
+		RestClient restClient = RestClient.create(BASE_URL);
+
+		String url = "/competitions/PL/standings";
+
+		return restClient.get()
+			.uri(url)
+			.header(AUTH_TOKEN, token)
+			.retrieve()
+			.body(StandingResponseDto.class);
+	}
 }

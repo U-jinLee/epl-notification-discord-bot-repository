@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.stereotype.Service;
 
 import com.example.esketit.dto.MatchResponseDto;
+import com.example.esketit.dto.StandingResponseDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,10 @@ public class FootballService {
 		String today = londonDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
 
 		return this.footballClient.getEplMatches(today);
+	}
+
+	public StandingResponseDto getEplStandings() {
+		return this.footballClient.getEplStandings();
 	}
 
 }
