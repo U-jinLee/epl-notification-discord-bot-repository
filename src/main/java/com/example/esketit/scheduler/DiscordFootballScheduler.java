@@ -20,6 +20,7 @@ public class DiscordFootballScheduler {
 	 */
 	@Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
 	public void sendTodayMatches() {
+		notifier.notifyTodayChamps();
 		notifier.notifyTodayEpl();
 	}
 }

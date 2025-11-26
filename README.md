@@ -6,14 +6,12 @@
 
 ## 🚀 Features
 1. **🔔 오늘의 EPL 경기 일정 자동 전송**
-    - 매일 오전 지정된 시간(예: 10:00)에 발송
-    - football-data.org API 기반 최신 Matches 조회
-    - 경기 일정 UTC → 한국 시간(KST) 자동 변환
-
 2. **🏆 EPL 순위표 자동 전송**
+3. **🔔 오늘의 챔스 경기 일정 자동 전송**
+4. **🏆 챔스 순위표 자동 전송**
    - 매일 오전 지정된 시간(예: 10:00)에 발송
-   - football-data.org API 기반 최신 standings 조회 
-   - 팀 순위 승/무/패 등 시각화
+   - football-data.org API 기반 최신 Matches 조회
+   - 경기 일정 UTC → 한국 시간(KST) 자동 변환
 
 ## 📦 Tech Stack
 | Layer           | Tech                     |
@@ -25,3 +23,5 @@
 | Scheduler       | Spring Scheduler (cron)  |
 | Hosting         | AWS EC2 (Amazon Linux)   |
 | Build           | Gradle                   |
+
+

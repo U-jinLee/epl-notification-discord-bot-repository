@@ -1,5 +1,8 @@
 package com.example.esketit.service;
 
+import static com.example.esketit.common.constants.FootballConstants.*;
+import static com.example.esketit.common.constants.LeagueConstants.*;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -8,7 +11,6 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.esketit.common.constants.FootballConstants;
 import com.example.esketit.dto.MatchResponseDto;
 import com.example.esketit.dto.StandingResponseDto;
 
@@ -30,19 +32,55 @@ public class DiscordFootballNotifier {
 
 	private static final int STANDING_COLOR = 0x3C1053; // 프리미어리그 보라색
 
+	public void notifyTodayChamps() {
+		List<MatchResponseDto.Match> matches = this.footballService.getMatches(CHAMPIONS_LEAGUE)
+			.matches();
+		StandingResponseDto standings = this.footballService.getStandings(CHAMPIONS_LEAGUE);
+
+		if (!matches.isEmpty()) {
+			sendCLStandingsWithFields(standings);
+			sendCLMatchesWithFields(matches);
+		}
+	}
+
 	public void notifyTodayEpl() {
 
 		List<MatchResponseDto.Match> matches = this.footballService.getTodayEplMatches().matches();
 		StandingResponseDto standings = this.footballService.getEplStandings();
 
-		if (matches.isEmpty()) {
-			discordSender.sendEmbed(FootballConstants.EPL_MATCH_TITLE.getValue(),
-									"오늘은 경기 없습니데이~ 대답 좀여..");
-		} else {
+		if (!matches.isEmpty()) {
 			sendStandingsWithFields(standings);
 			sendMatchesWithFields(matches);
 		}
 
+	}
+
+	private void sendCLMatchesWithFields(List<MatchResponseDto.Match> matches) {
+		List<DiscordSender.EmbedField> fields = new ArrayList<>();
+
+		for (MatchResponseDto.Match m : matches) {
+			ZonedDateTime krTime = m.utcDate().withZoneSameInstant(ZoneId.of("Asia/Seoul"));
+			String formatKRTime = DateTimeFormatter.ofPattern("MM월 dd일 HH:mm").format(krTime);
+
+			String matchInfo = String.format(
+				"**%s** vs **%s**\n %s",
+				m.homeTeam().shortName(),
+				m.awayTeam().shortName(),
+				formatKRTime
+			);
+
+			fields.add(
+				new DiscordSender.EmbedField(
+					"경기 " + (fields.size() + 1),
+					matchInfo,
+					true
+				));
+		}
+
+		discordSender.sendEmbedWithFields(CL_MATCH_TITLE.getValue(),
+										  0x1E90FF,
+										  "https://crests.football-data.org/CL.png",
+										  fields);
 	}
 
 	private void sendMatchesWithFields(List<MatchResponseDto.Match> matches) {
@@ -67,7 +105,49 @@ public class DiscordFootballNotifier {
 				));
 		}
 
-		discordSender.sendEmbedWithFields(FootballConstants.EPL_MATCH_TITLE.getValue(), 0x1E90FF, null, fields);
+		discordSender.sendEmbedWithFields(EPL_MATCH_TITLE.getValue(), 0x1E90FF, null, fields);
+	}
+
+	private void sendCLStandingsWithFields(StandingResponseDto standings) {
+		List<StandingResponseDto.StandingGroup.Table> table = standings.standings().getFirst().table();
+		List<DiscordSender.EmbedField> fields = new ArrayList<>();
+
+		StringBuilder championsLeague = new StringBuilder();
+		for (int i = 0; i < 8 && i < table.size(); i++) {
+			championsLeague.append(formatStanding(table.get(i)));
+		}
+		fields.add(new DiscordSender.EmbedField(
+			"16강 진출 팀",
+			championsLeague.toString(),
+			false
+		));
+
+		StringBuilder conference = new StringBuilder();
+		for (int i = 8; i < 24 && i < table.size(); i++) {
+			conference.append(formatStanding(table.get(i)));
+		}
+		fields.add(new DiscordSender.EmbedField(
+			"Playoff 진출 팀",
+			conference.toString(),
+			false
+		));
+
+		// 강등권 (18~20위)
+		StringBuilder relegation = new StringBuilder();
+		for (int i = 24; i < table.size(); i++) {
+			relegation.append(formatStanding(table.get(i)));
+		}
+		fields.add(new DiscordSender.EmbedField(
+			"조별리그 탈락 팀",
+			relegation.toString(),
+			false
+		));
+
+		// 단일 Embed로 전송
+		discordSender.sendEmbedWithFields(CL_STANDING_TITLE.getValue(),
+										  STANDING_COLOR,
+										  "https://crests.football-data.org/CL.png",
+										  fields);
 	}
 
 	private void sendStandingsWithFields(StandingResponseDto standings) {
@@ -128,7 +208,7 @@ public class DiscordFootballNotifier {
 		));
 
 		// 단일 Embed로 전송
-		discordSender.sendEmbedWithFields(FootballConstants.EPL_STANDING_TITLE.getValue(),
+		discordSender.sendEmbedWithFields(EPL_STANDING_TITLE.getValue(),
 										  STANDING_COLOR,
 										  null,
 										  fields);

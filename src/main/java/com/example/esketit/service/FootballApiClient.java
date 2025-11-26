@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
+import com.example.esketit.common.constants.LeagueConstants;
 import com.example.esketit.dto.MatchResponseDto;
 import com.example.esketit.dto.StandingResponseDto;
 
@@ -20,6 +21,30 @@ public class FootballApiClient {
 
 	private static final String BASE_URL = "https://api.football-data.org/v4";
 	private static final String AUTH_TOKEN = "X-Auth-Token";
+
+	public MatchResponseDto getMatches(LeagueConstants league, String start) {
+		RestClient restClient = RestClient.create(BASE_URL);
+
+		String url = "/competitions/"+ league.getCode() +"/matches?dateFrom=" + start + "&dateTo=" + start;
+
+		return restClient.get()
+			.uri(url)
+			.header(AUTH_TOKEN, token)
+			.retrieve()
+			.body(MatchResponseDto.class);
+	}
+
+	public StandingResponseDto getStandings(LeagueConstants league) {
+		RestClient restClient = RestClient.create(BASE_URL);
+
+		String url = "/competitions/"+ league.getCode() +"/standings";
+
+		return restClient.get()
+			.uri(url)
+			.header(AUTH_TOKEN, token)
+			.retrieve()
+			.body(StandingResponseDto.class);
+	}
 
 	public MatchResponseDto getEplMatches(String start) {
 		RestClient restClient = RestClient.create(BASE_URL);

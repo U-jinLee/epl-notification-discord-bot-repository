@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.stereotype.Service;
 
+import com.example.esketit.common.constants.LeagueConstants;
 import com.example.esketit.dto.MatchResponseDto;
 import com.example.esketit.dto.StandingResponseDto;
 
@@ -18,6 +19,18 @@ public class FootballService {
 	private final FootballApiClient footballClient;
 
 	private static final ZoneId UTC = ZoneId.of("UTC");
+
+	public MatchResponseDto getMatches(LeagueConstants league) {
+		LocalDateTime londonDate = LocalDateTime.now(UTC);
+
+		String today = londonDate.format(DateTimeFormatter.ISO_LOCAL_DATE);
+
+		return this.footballClient.getMatches(league, today);
+	}
+
+	public StandingResponseDto getStandings(LeagueConstants leagueConstants) {
+		return this.footballClient.getStandings(leagueConstants);
+	}
 
 	public MatchResponseDto getTodayEplMatches() {
 		LocalDateTime londonDate = LocalDateTime.now(UTC);
